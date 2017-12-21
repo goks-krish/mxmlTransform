@@ -34,16 +34,18 @@ namespace mxmlTransform
         static void Main(string[] args)
         {
             /**  ##TODO: 
-            1. Fix the image width & height issue 
+            1. Fix the image width & height issue -- Done
             2. Create Dirs automatically -- Done
             3. Read Values from define.xml -- Done
             4. Validate the input parameters -- Done
-            5. Add Path seperator to the paths -- NA
+            5. Delete html dir for ihtml -- Done
             6. IHTML transform -- Done
             7. MXML Validation -- Done
             8. Copy CSS, Scripts etc from book & common -- Done
-            9. Fix forward slash issue in book.xml(manifest file)
-            10. Delete html dir for ihtml -- Done
+            TODO:
+            9. Add Path seperator to the paths -- NA
+            10. Fix forward slash issue in book.xml(manifest file)
+            11. Common xsd to be added in MXML for validation
             */
 
             if(args.Length != 2) 
@@ -263,7 +265,7 @@ namespace mxmlTransform
             MxmlDocument doc = new MxmlDocument();
             doc.PreserveWhitespace = true;
             doc.Load(inputPath);
-            doc.Format("/"); //##TODO find the format path
+            doc.Format(outputTarPath + "mxml/" );
             MxmlTextWriter mxmlWriter = new MxmlTextWriter(outputPath, null, true);
             doc.WriteTo(mxmlWriter);
 

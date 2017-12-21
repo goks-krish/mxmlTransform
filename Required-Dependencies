@@ -1,0 +1,9 @@
+Dependencies
+1. Mvp.xml: 
+	dotnet add package Mvp.Xml --version 2.3.0
+2. System.Drawing (core-compat): 
+	dotnet add package CoreCompat.System.Drawing --version 1.0.0-beta006
+   MAC Dependency: 
+	dotnet add package runtime.osx.10.10-x64.CoreCompat.System.Drawing --version 5.4.0-r8
+   Linux Dependency: 
+	dotnet add package runtime.linux-x64.CoreCompat.System.Drawing --version 1.0.0-beta009 

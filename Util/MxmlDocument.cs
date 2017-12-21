@@ -66,9 +66,9 @@ namespace mxmlTransform.Mxml.Util
                     // if image exist
                     if (image.Exists)
                     {
-                        // set width and heigth attributes //##TODO: fix this 
-                     //   widthAttribute.Value = System.Drawing.Image.FromFile(imagePath).Width.ToString();
-                      //  heightAttribute.Value = System.Drawing.Image.FromFile(imagePath).Height.ToString();
+                        // set width and heigth attributes 
+                       widthAttribute.Value = System.Drawing.Image.FromFile(imagePath).Width.ToString();
+                       heightAttribute.Value = System.Drawing.Image.FromFile(imagePath).Height.ToString();
                     }
                     else
                     {
@@ -108,9 +108,9 @@ namespace mxmlTransform.Mxml.Util
                 // if symbol exist
                 if (symbol.Exists)
                 {
-                    // set width and heigth attributes //##TODO: fix this 
-                   // widthAttribute.Value = System.Drawing.Image.FromFile(symbolPath).Width.ToString();
-                    //heightAttribute.Value = System.Drawing.Image.FromFile(symbolPath).Height.ToString();
+                    // set width and heigth attributes
+                    widthAttribute.Value = System.Drawing.Image.FromFile(symbolPath).Width.ToString();
+                    heightAttribute.Value = System.Drawing.Image.FromFile(symbolPath).Height.ToString();
                 }
                 else
                 {
