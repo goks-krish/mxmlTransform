@@ -6,6 +6,7 @@ using System.Xml.XPath;
 using System.IO;
 using System.ComponentModel;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 using Mvp.Xml.Exslt;
 using Mvp.Xml.Common.Xsl;
@@ -16,7 +17,7 @@ namespace mxmlTransform
 {
     class Program
     {
-        private static string commonSrc = "/Users/maithra/Desktop/Medhand/common/";
+        private static string commonSrc = null;
         private static string bookSrcPath = null;
         private static string outputTarPath = null;
         private static string mxmlFile = null;
@@ -33,32 +34,19 @@ namespace mxmlTransform
 
         static void Main(string[] args)
         {
-            /**  ##TODO: 
-            1. Fix the image width & height issue -- Done
-            2. Create Dirs automatically -- Done
-            3. Read Values from define.xml -- Done
-            4. Validate the input parameters -- Done
-            5. Delete html dir for ihtml -- Done
-            6. IHTML transform -- Done
-            7. MXML Validation -- Done
-            8. Copy CSS, Scripts etc from book & common -- Done
-            TODO:
-            9. Add Path seperator to the paths -- NA
-            10. Fix forward slash issue in book.xml(manifest file)
-            11. Common xsd to be added in MXML for validation
-            */
 
             if(args.Length != 2) 
             {
                 Console.WriteLine("Usage: mxmlTransfrom <input_folder> <output_folder>");
                 //throw new Exception("Sorry, provide input and output folders as arguements");
-                //bookSrcPath = args[0];
-                //outputTarPath = args[1];
 
-                bookSrcPath = "/Users/maithra/Desktop/Medhand/htc/";
-                outputTarPath = "/Users/maithra/Desktop/Medhand/htc/new-output/";
+                bookSrcPath = "/Users/maithra/Desktop/Medhand/dyna/";
+                outputTarPath = "/Users/maithra/Desktop/Medhand/dyna/new-output/";
             }
-
+            //bookSrcPath = args[0];
+            //outputTarPath = args[1];
+            commonSrc =  new DirectoryInfo(bookSrcPath).Parent.FullName + "/common/";
+            
             string[] DefineFiles = Directory.GetFiles(bookSrcPath+"define/","*define.xml",SearchOption.TopDirectoryOnly);
             
             //1. Initialize: Get data from define, Create Dirs and copy common files
@@ -166,7 +154,34 @@ namespace mxmlTransform
             string outputPath = outputTarPath + "mxml/" + BookName + "_mxml_TEMP_BASIC.xml";
             string xsltPath = bookSrcPath + "xslt/" + BookXslt;
             Console.WriteLine("Applying MXML xslt at " + DateTime.Now);
-            xsltTransform(inputPath, outputPath, xsltPath);
+            
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
+            {
+                xsltTransform(inputPath, outputPath, xsltPath);
+            } 
+            else 
+            {
+                try
+                { 
+                    String line = null;
+                    using (StreamReader sr = new StreamReader(inputPath))
+                    {
+                        line = sr.ReadToEnd();
+                    }
+                    inputPath = bookSrcPath + "/" + BookSrc + "/manifest.xml";
+                    line = line.Replace("\\","/");
+                    using (StreamWriter outputFile = new StreamWriter(inputPath)) 
+                    {     
+                        outputFile.WriteLine(line);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+                xsltTransform(inputPath, outputPath, xsltPath);
+                deleteFile(inputPath);
+            }
 
             inputPath = outputPath;
             xsltPath = commonPath + "table-mxml.xsl";
@@ -248,8 +263,7 @@ namespace mxmlTransform
             mxmlWriter.WriteRaw("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
             mxmlWriter.WriteRaw("<?xml-stylesheet type=\"text/xsl\" href=\"../../../material/css/"  + BookName +"/" +  BookName +".css\"?>\n"); 
             
-            //## TODO: add Common path below. Remove the hard-coded value
-            mxmlWriter.WriteRaw("<!DOCTYPE book SYSTEM \""+"../../../common/mxml/dtd/mxml.dtd\">\n");
+            mxmlWriter.WriteRaw("<!DOCTYPE book SYSTEM \"" + commonSrc + "mxml/dtd/mxml.dtd\">\n");
 
             mxmlTransform.Load(xsltPath,xsltSettings, resolver);
             mxmlTransform.Transform(input, null, new XmlOutput(mxmlWriter));
@@ -338,11 +352,9 @@ namespace mxmlTransform
         {
             Console.WriteLine("Started IHTML Transformation at " + DateTime.Now);  
 
-            //##TODO: check worker & htmlString
             BackgroundWorker worker = new BackgroundWorker();
             string htmlString = outputTarPath + "ihtml/index.html";
             
-
             string xsltString = bookSrcPath + "xslt/" + BookXsltIthml;
             XPathDocument mxml = new XPathDocument(mxmlFile);
             int numberOfPages = mxml.CreateNavigator().Select("//*[(name() = 'table' and @cols > 2) or (name() = 'img' and (@width > 280 or @height > 450)) or (name() = 'index-item') or (name() = 'container' and ((@pres-type = 'hard' or @pres-type = 'hidden') and not(parent::index-item and child::table[@cols > 2])))]").Count;
