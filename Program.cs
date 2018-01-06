@@ -40,8 +40,16 @@ namespace mxmlTransform
                 Console.WriteLine("Usage: mxmlTransfrom <input_folder> <output_folder>");
                 throw new Exception("Sorry, provide input and output folders as arguements");
             }
-            bookSrcPath = args[0] + "/";
-            outputTarPath = args[1] + "/";
+            bookSrcPath = args[0];
+            outputTarPath = args[1];
+            
+            if(!bookSrcPath.EndsWith("\\")) {
+                bookSrcPath = bookSrcPath + "/";
+            }
+            if(!outputTarPath.EndsWith("\\")) {
+                outputTarPath = outputTarPath + "/";
+            }
+            
             commonSrc =  new DirectoryInfo(bookSrcPath).Parent.FullName + "/common/";
             
             string[] DefineFiles = Directory.GetFiles(bookSrcPath+"define/","*define.xml",SearchOption.TopDirectoryOnly);
