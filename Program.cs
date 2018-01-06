@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Xml;
 using System.Xml.Xsl;
 using System.Xml.Schema;
@@ -38,13 +38,10 @@ namespace mxmlTransform
             if(args.Length != 2) 
             {
                 Console.WriteLine("Usage: mxmlTransfrom <input_folder> <output_folder>");
-                //throw new Exception("Sorry, provide input and output folders as arguements");
-
-                bookSrcPath = "/Users/maithra/Desktop/Medhand/dyna/";
-                outputTarPath = "/Users/maithra/Desktop/Medhand/dyna/new-output/";
+                throw new Exception("Sorry, provide input and output folders as arguements");
             }
-            //bookSrcPath = args[0];
-            //outputTarPath = args[1];
+            bookSrcPath = args[0] + "/";
+            outputTarPath = args[1] + "/";
             commonSrc =  new DirectoryInfo(bookSrcPath).Parent.FullName + "/common/";
             
             string[] DefineFiles = Directory.GetFiles(bookSrcPath+"define/","*define.xml",SearchOption.TopDirectoryOnly);
